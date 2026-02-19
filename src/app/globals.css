@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Space+Grotesk:wght@700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-card-border;
+  }
+
+  body {
+    @apply text-gray-100;
+    background: #1a1625;
+    /* Softer dark purple-gray instead of pure black */
+    font-family: 'Inter', sans-serif;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(138, 43, 226, 0.06) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 191, 255, 0.06) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer utilities {
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+  }
+
+  .glass-card {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.08), rgba(0, 191, 255, 0.08));
+    border: 2px solid rgba(138, 43, 226, 0.25);
+    backdrop-filter: blur(10px);
+  }
+
+  .gradient-text {
+    background: linear-gradient(to right, #a855f7, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
