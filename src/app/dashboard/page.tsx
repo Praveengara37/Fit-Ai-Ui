@@ -2,20 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, LogOut, User as UserIcon, Target, TrendingUp } from 'lucide-react';
+import { Loader2, LogOut, User as UserIcon, Target, TrendingUp, Plus, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { verifyAuth, logout } from '@/lib/auth';
 import { getProfile } from '@/lib/profile';
-import { UserWithProfile } from '@/types';
+import { getTodayMeals } from '@/lib/meals';
+import { UserWithProfile, DailyMeals } from '@/types';
 import Logo from '@/components/Logo';
 import StepHeroCard from '@/components/analytics/StepHeroCard';
 import QuickStatsGrid from '@/components/analytics/QuickStatsGrid';
+import NutritionSummary from '@/components/meals/NutritionSummary';
 
 export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<UserWithProfile | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [mealsData, setMealsData] = useState<DailyMeals | null>(null);
 
     useEffect(() => {
         checkAuth();
@@ -33,6 +36,14 @@ export default function DashboardPage() {
             // Fetch user profile
             const profileData = await getProfile();
             setUser(profileData);
+
+            // Fetch today's meals for nutrition widget
+            try {
+                const meals = await getTodayMeals();
+                setMealsData(meals);
+            } catch {
+                // Silently fail - meals widget will show empty state
+            }
         } catch (error) {
             router.push('/login');
         } finally {
@@ -150,6 +161,43 @@ export default function DashboardPage() {
                     <div className="mb-12 space-y-6 animate-in fade-in slide-in-from-bottom duration-700 delay-150">
                         <StepHeroCard />
                         <QuickStatsGrid />
+
+                        {/* Nutrition Widget */}
+                        <div className="relative">
+                            {mealsData ? (
+                                <div>
+                                    <NutritionSummary
+                                        totals={mealsData.totals}
+                                        goals={mealsData.goals}
+                                        compact
+                                    />
+                                    <div className="flex items-center gap-3 mt-3">
+                                        <button
+                                            onClick={() => router.push('/meals/log')}
+                                            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#a855f7] to-[#22d3ee] text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02]"
+                                        >
+                                            <Plus size={16} /> Log Meal
+                                        </button>
+                                        <button
+                                            onClick={() => router.push('/meals')}
+                                            className="flex items-center gap-2 px-4 py-2.5 bg-[#2a2235] border border-[rgba(168,85,247,0.25)] text-gray-300 hover:text-white rounded-xl text-sm transition-all"
+                                        >
+                                            View Details <ArrowRight size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="bg-[#2a2235] border border-[rgba(168,85,247,0.15)] rounded-2xl p-6 text-center">
+                                    <p className="text-gray-500 text-sm mb-3">No meals logged today</p>
+                                    <button
+                                        onClick={() => router.push('/meals/log')}
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#a855f7] to-[#22d3ee] text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02]"
+                                    >
+                                        <Plus size={16} /> Log Your First Meal
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 
@@ -173,11 +221,14 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Nutrition Card */}
-                    <div className="glass-card rounded-2xl p-6 opacity-60 cursor-not-allowed text-left">
+                    <button
+                        onClick={() => router.push('/meals')}
+                        className="glass-card rounded-2xl p-6 hover:border-primary-cyan transition-all duration-300 hover:scale-105 text-left"
+                    >
                         <div className="text-4xl mb-4">🥗</div>
-                        <h3 className="font-heading text-xl font-bold text-gray-100 mb-2">Nutrition</h3>
-                        <p className="text-sm text-gray-400">Coming soon</p>
-                    </div>
+                        <h3 className="font-heading text-xl font-bold gradient-text mb-2">Nutrition</h3>
+                        <p className="text-sm text-gray-400">Track meals & macros</p>
+                    </button>
 
                     {/* Progress Card */}
                     <div className="glass-card rounded-2xl p-6 opacity-60 cursor-not-allowed text-left">

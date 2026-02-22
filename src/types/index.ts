@@ -85,3 +85,114 @@ export interface ApiResponse<T> {
     message?: string;
     error?: string;
 }
+
+// ─── Meal Tracking Types ───────────────────────────────────────
+
+export interface Food {
+    foodId: string;
+    name: string;
+    brandName?: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    servingSize: number;
+    servingUnit: string;
+}
+
+export interface MealFood {
+    id?: string;
+    foodId?: string;
+    foodName: string;
+    brandName?: string;
+    servingSize: number;
+    servingUnit: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+}
+
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
+export interface Meal {
+    id: string;
+    mealType: MealType;
+    date: string;
+    totalCalories: number;
+    totalProtein: number;
+    totalCarbs: number;
+    totalFat: number;
+    notes?: string;
+    foods: MealFood[];
+    createdAt: string;
+}
+
+export interface DailyMeals {
+    date: string;
+    meals: Meal[];
+    totals: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+    goals: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+    remaining: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+}
+
+export interface NutritionGoals {
+    dailyCalories: number;
+    dailyProtein: number;
+    dailyCarbs: number;
+    dailyFat: number;
+}
+
+export interface MealStats {
+    period: 'week' | 'month' | 'year';
+    totalCalories: number;
+    averageCalories: number;
+    totalProtein: number;
+    averageProtein: number;
+    totalCarbs: number;
+    averageCarbs: number;
+    totalFat: number;
+    averageFat: number;
+    daysLogged: number;
+    totalMeals: number;
+    goalReachedDays: number;
+    dailyBreakdown?: Array<{
+        date: string;
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    }>;
+}
+
+export interface LogMealData {
+    mealType: MealType;
+    date: string;
+    foods: Array<{
+        foodId?: string;
+        foodName: string;
+        brandName?: string;
+        servingSize: number;
+        servingUnit: string;
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    }>;
+    notes?: string;
+}
