@@ -8,6 +8,8 @@ import { verifyAuth, logout } from '@/lib/auth';
 import { getProfile } from '@/lib/profile';
 import { UserWithProfile } from '@/types';
 import Logo from '@/components/Logo';
+import StepHeroCard from '@/components/analytics/StepHeroCard';
+import QuickStatsGrid from '@/components/analytics/QuickStatsGrid';
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -142,6 +144,14 @@ export default function DashboardPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Analytics Dashboard Overview */}
+                {user?.profile && (
+                    <div className="mb-12 space-y-6 animate-in fade-in slide-in-from-bottom duration-700 delay-150">
+                        <StepHeroCard />
+                        <QuickStatsGrid />
+                    </div>
+                )}
 
                 {/* Navigation Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
