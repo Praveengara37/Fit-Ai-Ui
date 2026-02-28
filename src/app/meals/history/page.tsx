@@ -11,14 +11,36 @@ import {
     Calendar,
 } from 'lucide-react';
 import { getMealHistory } from '@/lib/meals';
-import { Meal } from '@/types';
+
+interface HistoryFood {
+    foodName: string;
+    servingSize: number;
+    servingUnit: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+}
+
+interface HistoryMeal {
+    id: string;
+    mealType: string;
+    date: string;
+    totalCalories: number;
+    totalProtein: number;
+    totalCarbs: number;
+    totalFat: number;
+    notes?: string | null;
+    foods: HistoryFood[];
+    createdAt?: string;
+}
 
 interface DayGroup {
     date: string;
     displayDate: string;
     totalCalories: number;
     totalProtein: number;
-    meals: Meal[];
+    meals: HistoryMeal[];
 }
 
 const RANGE_OPTIONS = [
@@ -48,46 +70,45 @@ export default function MealHistoryPage() {
             const startDate = new Date();
             startDate.setDate(endDate.getDate() - rangeDays);
 
-            const data = await getMealHistory(
-                startDate.toISOString().split('T')[0],
-                endDate.toISOString().split('T')[0]
-            );
+            const start = startDate.toISOString().split('T')[0];
+            const end = endDate.toISOString().split('T')[0];
 
-            // Group meals by date
-            const groups: Record<string, DayGroup> = {};
-            const meals: Meal[] = data?.meals || data || [];
+            const data = await getMealHistory(start, end);
 
-            if (Array.isArray(meals)) {
-                meals.forEach((meal: Meal) => {
-                    const dateKey = meal.date || meal.createdAt?.split('T')[0];
-                    if (!dateKey) return;
+            // Backend returns { history: [{ date, meals, totals }], periodStats }
+            const history = data?.history || [];
 
-                    if (!groups[dateKey]) {
-                        groups[dateKey] = {
-                            date: dateKey,
-                            displayDate: new Date(dateKey).toLocaleDateString('en-US', {
-                                weekday: 'long',
-                                month: 'short',
-                                day: 'numeric',
-                            }),
-                            totalCalories: 0,
-                            totalProtein: 0,
-                            meals: [],
-                        };
-                    }
+            const groups: DayGroup[] = history.map((day: any) => ({
+                date: day.date,
+                displayDate: new Date(day.date + 'T00:00:00').toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'short',
+                    day: 'numeric',
+                }),
+                totalCalories: day.totals?.calories || 0,
+                totalProtein: day.totals?.protein || 0,
+                meals: (day.meals || []).map((meal: any) => ({
+                    id: meal.id,
+                    mealType: meal.mealType,
+                    date: day.date,
+                    totalCalories: meal.totalCalories || 0,
+                    totalProtein: meal.totalProtein || 0,
+                    totalCarbs: meal.totalCarbs || 0,
+                    totalFat: meal.totalFat || 0,
+                    notes: meal.notes,
+                    foods: meal.foods || [],
+                    createdAt: meal.createdAt,
+                })),
+            }));
 
-                    groups[dateKey].totalCalories += meal.totalCalories || 0;
-                    groups[dateKey].totalProtein += meal.totalProtein || 0;
-                    groups[dateKey].meals.push(meal);
-                });
-            }
-
-            const sorted = Object.values(groups).sort(
+            // Sort descending by date
+            groups.sort(
                 (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
             );
 
-            setDayGroups(sorted);
-        } catch {
+            setDayGroups(groups);
+        } catch (err) {
+            console.error('❌ Meal History Error:', err);
             setError('Failed to load meal history.');
         } finally {
             setLoading(false);
@@ -99,7 +120,7 @@ export default function MealHistoryPage() {
 
         dayGroups.forEach((day) => {
             day.meals.forEach((meal) => {
-                meal.foods.forEach((food) => {
+                meal.foods.forEach((food: HistoryFood) => {
                     rows.push([
                         day.date,
                         meal.mealType,
@@ -162,8 +183,8 @@ export default function MealHistoryPage() {
                             onClick={() => setRangeDays(opt.days)}
                             disabled={loading}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${rangeDays === opt.days
-                                    ? 'bg-[#a855f7] text-white'
-                                    : 'text-gray-400 hover:text-white'
+                                ? 'bg-[#a855f7] text-white'
+                                : 'text-gray-400 hover:text-white'
                                 } disabled:opacity-50`}
                         >
                             {opt.label}
@@ -231,7 +252,7 @@ export default function MealHistoryPage() {
                                                                 {meal.totalCalories} cal
                                                             </span>
                                                         </div>
-                                                        {meal.foods.map((food, idx) => (
+                                                        {meal.foods.map((food: HistoryFood, idx: number) => (
                                                             <p key={idx} className="text-xs text-gray-500 ml-3">
                                                                 • {food.foodName} ({food.servingSize}{food.servingUnit}) — {food.calories} cal
                                                             </p>

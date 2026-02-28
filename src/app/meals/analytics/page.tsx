@@ -3,16 +3,25 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, Loader2, TrendingUp, Flame, Calendar, Award } from 'lucide-react';
-import { getMealStats, getNutritionGoals } from '@/lib/meals';
+import { getMealStats, getNutritionGoals, getMealHistory } from '@/lib/meals';
 import { MealStats, NutritionGoals } from '@/types';
 import CalorieChart from '@/components/meals/CalorieChart';
 import MacroChart from '@/components/meals/MacroChart';
+
+interface DailyChartEntry {
+    date: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+}
 
 export default function NutritionAnalyticsPage() {
     const router = useRouter();
     const [period, setPeriod] = useState<'week' | 'month' | 'year'>('week');
     const [stats, setStats] = useState<MealStats | null>(null);
     const [goals, setGoals] = useState<NutritionGoals | null>(null);
+    const [dailyData, setDailyData] = useState<DailyChartEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -20,32 +29,68 @@ export default function NutritionAnalyticsPage() {
         fetchData();
     }, [period]);
 
-    const normalizeStats = (data: any): MealStats => ({
-        period: data?.period || period,
-        totalCalories: data?.totalCalories ?? 0,
-        averageCalories: data?.averageCalories ?? 0,
-        totalProtein: data?.totalProtein ?? 0,
-        averageProtein: data?.averageProtein ?? 0,
-        totalCarbs: data?.totalCarbs ?? 0,
-        averageCarbs: data?.averageCarbs ?? 0,
-        totalFat: data?.totalFat ?? 0,
-        averageFat: data?.averageFat ?? 0,
-        daysLogged: data?.daysLogged ?? 0,
-        totalMeals: data?.totalMeals ?? 0,
-        goalReachedDays: data?.goalReachedDays ?? 0,
-        dailyBreakdown: data?.dailyBreakdown || [],
-    });
+    const normalizeStats = (data: any): MealStats => {
+        // Backend returns { period, stats: { totalCalories, ... } }
+        const s = data?.stats || data || {};
+        return {
+            period: data?.period || period,
+            totalCalories: s.totalCalories ?? 0,
+            averageCalories: s.averageCalories ?? 0,
+            totalProtein: s.totalProtein ?? 0,
+            averageProtein: s.averageProtein ?? 0,
+            totalCarbs: s.totalCarbs ?? 0,
+            averageCarbs: s.averageCarbs ?? 0,
+            totalFat: s.totalFat ?? 0,
+            averageFat: s.averageFat ?? 0,
+            daysLogged: s.daysLogged ?? 0,
+            totalMeals: s.totalMeals ?? 0,
+            goalReachedDays: s.goalReachedDays ?? 0,
+            dailyBreakdown: [],
+        };
+    };
+
+    const getPeriodDays = (p: string) => {
+        if (p === 'month') return 30;
+        if (p === 'year') return 365;
+        return 7;
+    };
 
     const fetchData = async () => {
         try {
             setLoading(true);
             setError(null);
-            const [statsData, goalsData] = await Promise.all([
+
+            // Calculate date range for history
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - getPeriodDays(period));
+
+            const [statsData, goalsData, historyData] = await Promise.all([
                 getMealStats(period),
                 getNutritionGoals(),
+                getMealHistory(
+                    startDate.toISOString().split('T')[0],
+                    endDate.toISOString().split('T')[0]
+                ),
             ]);
+
             setStats(normalizeStats(statsData));
             setGoals(goalsData);
+
+            // Build daily chart data from history response
+            // Backend history returns { history: [{ date, meals, totals: { calories, protein, carbs, fat } }] }
+            const history = historyData?.history || [];
+            const chartData: DailyChartEntry[] = history
+                .map((day: any) => ({
+                    date: day.date,
+                    calories: day.totals?.calories ?? 0,
+                    protein: day.totals?.protein ?? 0,
+                    carbs: day.totals?.carbs ?? 0,
+                    fat: day.totals?.fat ?? 0,
+                }))
+                .sort((a: DailyChartEntry, b: DailyChartEntry) => a.date.localeCompare(b.date));
+
+            setDailyData(chartData);
         } catch {
             setError('Failed to load analytics. Please try again.');
         } finally {
@@ -54,7 +99,6 @@ export default function NutritionAnalyticsPage() {
     };
 
     const calorieGoal = goals?.dailyCalories || 2000;
-    const dailyData = stats?.dailyBreakdown || [];
 
     return (
         <div className="min-h-screen p-4 sm:p-8">

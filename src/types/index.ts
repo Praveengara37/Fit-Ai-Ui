@@ -23,6 +23,7 @@ export interface UserProfile {
     fitnessGoal: FitnessGoal;
     activityLevel: ActivityLevel;
     dietaryPreference: DietaryPreference;
+    dailyStepGoal?: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -195,4 +196,23 @@ export interface LogMealData {
         fat: number;
     }>;
     notes?: string;
+}
+
+// ─── Recommendations Types ────────────────────────────────────
+
+export interface Recommendations {
+    bmr: number;
+    tdee: number;
+    recommendedCalories: number;
+    reason: string;
+    macros: {
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+    macroRatios: {
+        protein: string;
+        carbs: string;
+        fat: string;
+    };
 }

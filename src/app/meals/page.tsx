@@ -16,6 +16,7 @@ import { getTodayMeals, deleteMeal as deleteMealApi } from '@/lib/meals';
 import { DailyMeals } from '@/types';
 import MealCard from '@/components/meals/MealCard';
 import NutritionSummary from '@/components/meals/NutritionSummary';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 export default function MealsPage() {
     const router = useRouter();
@@ -23,6 +24,7 @@ export default function MealsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -48,14 +50,15 @@ export default function MealsPage() {
         }
     };
 
-    const handleDelete = async (mealId: string) => {
-        if (deleteConfirm !== mealId) {
-            setDeleteConfirm(mealId);
-            return;
-        }
+    const handleDelete = (mealId: string) => {
+        setDeleteConfirm(mealId);
+        setShowDeleteModal(true);
+    };
 
+    const confirmDelete = async () => {
+        if (!deleteConfirm) return;
         try {
-            await deleteMealApi(mealId);
+            await deleteMealApi(deleteConfirm);
             toast.success('Meal deleted');
             fetchMeals();
         } catch {
@@ -179,6 +182,17 @@ export default function MealsPage() {
                         )}
                     </>
                 )}
+
+                {/* Delete Confirmation Modal */}
+                <ConfirmModal
+                    open={showDeleteModal}
+                    onClose={() => { setShowDeleteModal(false); setDeleteConfirm(null); }}
+                    onConfirm={confirmDelete}
+                    title="Delete Meal?"
+                    message="Are you sure you want to delete this meal? This action cannot be undone."
+                    confirmText="Delete"
+                    variant="danger"
+                />
             </div>
         </div>
     );

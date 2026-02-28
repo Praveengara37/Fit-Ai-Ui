@@ -4,7 +4,8 @@ import type {
     UserWithProfile,
     UserProfile,
     ProfileSetupRequest,
-    ProfileUpdateRequest
+    ProfileUpdateRequest,
+    Recommendations
 } from '@/types';
 
 /**
@@ -98,5 +99,27 @@ export async function changePassword(
             throw new Error(error.response.data.message);
         }
         throw new Error('Password change failed. Please try again.');
+    }
+}
+
+/**
+ * Get personalized calorie recommendations
+ */
+export async function getRecommendations(): Promise<Recommendations> {
+    try {
+        const response = await api.get<ApiResponse<Recommendations>>(
+            '/api/profile/recommendations'
+        );
+
+        if (!response.data.success || !response.data.data) {
+            throw new Error(response.data.message || 'Failed to fetch recommendations');
+        }
+
+        return response.data.data;
+    } catch (error: any) {
+        if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+        }
+        throw new Error('Failed to fetch recommendations. Please complete your profile first.');
     }
 }

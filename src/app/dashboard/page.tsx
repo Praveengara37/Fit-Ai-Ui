@@ -230,12 +230,15 @@ export default function DashboardPage() {
                         <p className="text-sm text-gray-400">Track meals & macros</p>
                     </button>
 
-                    {/* Progress Card */}
-                    <div className="glass-card rounded-2xl p-6 opacity-60 cursor-not-allowed text-left">
-                        <div className="text-4xl mb-4">📊</div>
-                        <h3 className="font-heading text-xl font-bold text-gray-100 mb-2">Progress</h3>
-                        <p className="text-sm text-gray-400">Coming soon</p>
-                    </div>
+                    {/* Settings Card */}
+                    <button
+                        onClick={() => router.push('/settings')}
+                        className="glass-card rounded-2xl p-6 hover:border-primary-cyan transition-all duration-300 hover:scale-105 text-left"
+                    >
+                        <div className="text-4xl mb-4">⚙️</div>
+                        <h3 className="font-heading text-xl font-bold gradient-text mb-2">Settings</h3>
+                        <p className="text-sm text-gray-400">Goals &amp; preferences</p>
+                    </button>
                 </div>
             </div>
         </div>
