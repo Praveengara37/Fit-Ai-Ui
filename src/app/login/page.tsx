@@ -50,7 +50,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md">
                 {/* Logo with glow effect */}
                 <div className="flex justify-center mb-8 animate-in fade-in duration-500">
-                    <Logo className="glow-purple transition-all hover:scale-105" width={220} height={83} />
+                    <Logo className="drop-shadow-[0_0_25px_rgba(168,85,247,0.6)] hover:drop-shadow-[0_0_35px_rgba(168,85,247,0.8)] transition-all duration-300 hover:scale-105" width={180} height={180} />
                 </div>
 
                 {/* Glass card */}

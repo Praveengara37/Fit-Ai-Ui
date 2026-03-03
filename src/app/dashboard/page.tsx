@@ -84,7 +84,7 @@ export default function DashboardPage() {
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-12">
-                    <Logo className="glow-purple" width={180} height={68} />
+                    <Logo className="drop-shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.7)] transition-all duration-300" width={180} height={68} />
                     <button
                         onClick={handleLogout}
                         disabled={isLoggingOut}

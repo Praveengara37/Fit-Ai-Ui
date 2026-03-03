@@ -128,7 +128,7 @@ export default function ProfileSetupPage() {
         <div className="min-h-screen flex items-center justify-center p-4 py-12">
             <div className="w-full max-w-2xl">
                 <div className="flex justify-center mb-8 animate-in fade-in duration-500">
-                    <Logo className="glow-purple" width={200} height={75} />
+                    <Logo className="drop-shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.7)] transition-all duration-300" width={180} height={180} />
                 </div>
 
                 <div className="glass-card rounded-3xl p-8 animate-in slide-in-from-bottom duration-700">

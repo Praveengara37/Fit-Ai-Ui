@@ -183,7 +183,7 @@ export default function ProfileEditPage() {
         <div className="min-h-screen flex items-center justify-center p-4 py-12">
             <div className="w-full max-w-2xl">
                 <div className="flex items-center justify-between mb-8">
-                    <Logo className="glow-purple" width={180} height={68} />
+                    <Logo className="drop-shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.7)] transition-all duration-300" width={180} height={68} />
                     <button
                         onClick={() => router.push('/profile')}
                         className="flex items-center gap-2 text-gray-400 hover:text-primary-cyan transition-colors"

@@ -142,7 +142,7 @@ export default function ProfilePage() {
             <div className="min-h-screen p-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
-                        <Logo className="glow-purple" width={180} height={68} />
+                        <Logo className="drop-shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.7)] transition-all duration-300" width={180} height={68} />
                         <button
                             onClick={() => router.push('/dashboard')}
                             className="flex items-center gap-2 text-gray-400 hover:text-primary-cyan transition-colors"
@@ -187,7 +187,7 @@ export default function ProfilePage() {
         <div className="min-h-screen p-4 py-8">
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
-                    <Logo className="glow-purple" width={180} height={68} />
+                    <Logo className="drop-shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.7)] transition-all duration-300" width={180} height={68} />
                     <button
                         onClick={() => router.push('/dashboard')}
                         className="flex items-center gap-2 text-gray-400 hover:text-primary-cyan transition-colors"

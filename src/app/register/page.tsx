@@ -65,7 +65,7 @@ export default function RegisterPage() {
                     </button>
                 </div>
                 <div className="flex justify-center mb-8 animate-in fade-in duration-500">
-                    <Logo className="glow-purple" width={200} height={75} />
+                    <Logo className="drop-shadow-[0_0_25px_rgba(168,85,247,0.6)] hover:drop-shadow-[0_0_35px_rgba(168,85,247,0.8)] transition-all duration-300 hover:scale-105" width={180} height={180} />
                 </div>
 
                 <div className="glass-card rounded-3xl p-8 animate-in slide-in-from-bottom duration-700">
