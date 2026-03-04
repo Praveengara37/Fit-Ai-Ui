@@ -9,6 +9,7 @@ import { getProfile } from '@/lib/profile';
 import { getTodayMeals } from '@/lib/meals';
 import { UserWithProfile, DailyMeals } from '@/types';
 import Logo from '@/components/Logo';
+import { ChatbotIcon } from '@/components/ui/ChatbotIcon';
 import StepHeroCard from '@/components/analytics/StepHeroCard';
 import QuickStatsGrid from '@/components/analytics/QuickStatsGrid';
 import NutritionSummary from '@/components/meals/NutritionSummary';
@@ -202,7 +203,7 @@ export default function DashboardPage() {
                 )}
 
                 {/* Navigation Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                     {/* Profile Card */}
                     <button
                         onClick={() => router.push('/profile')}
@@ -228,6 +229,18 @@ export default function DashboardPage() {
                         <div className="text-4xl mb-4">🥗</div>
                         <h3 className="font-heading text-xl font-bold gradient-text mb-2">Nutrition</h3>
                         <p className="text-sm text-gray-400">Track meals & macros</p>
+                    </button>
+
+                    {/* AI Chat Card */}
+                    <button
+                        onClick={() => router.push('/chat')}
+                        className="glass-card rounded-2xl p-6 hover:border-primary-cyan transition-all duration-300 hover:scale-105 text-left"
+                    >
+                        <div className="mb-4">
+                            <ChatbotIcon width={40} height={36} className="drop-shadow-[0_0_10px_rgba(153,87,241,0.4)]" />
+                        </div>
+                        <h3 className="font-heading text-xl font-bold gradient-text mb-2">AI Chat</h3>
+                        <p className="text-sm text-gray-400">AI fitness coach</p>
                     </button>
 
                     {/* Settings Card */}

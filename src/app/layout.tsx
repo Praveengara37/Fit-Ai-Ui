@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { ChatButton } from '@/components/ChatButton';
 import './globals.css';
 
 const inter = Inter({
@@ -32,6 +33,7 @@ export default function RootLayout({
                 <ErrorBoundary>
                     {children}
                 </ErrorBoundary>
+                <ChatButton />
                 <Toaster
                     position="top-right"
                     toastOptions={{
